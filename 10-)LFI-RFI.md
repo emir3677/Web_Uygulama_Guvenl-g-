@@ -9,7 +9,7 @@ Eğitim içeriğinde, LFI ve RFI zafiyetlerinin nasıl çalıştığını ve bu 
 
 LFI, bir web uygulamasının kullanıcıdan gelen dosya yolu girdilerini yetersiz doğrulaması sonucu ortaya çıkan kritik bir zafiyettir. Saldırganın sunucu üzerindeki yerel dosyaları (konfigürasyonlar, şifreler, loglar) okumasına olanak tanır.
 
-![alt text](<Ekran görüntüsü 2026-03-14 021132.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 021132.png>)
 
 # 📂 LFI Operasyonu: Dizinlerin Derinliğine Yolculuk
 
@@ -91,11 +91,11 @@ Sunucular, kendilerine gelen her isteği ve kimden geldiğini (User-Agent) kayde
 
 Aşağıda User-Agent alanına enjekte edilmiş PHP kodu bulunan bir HTTP isteği bulunuyor.
 
-![alt text](<Ekran görüntüsü 2026-03-14 023058.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 023058.png>)
 
 Bu isteği gönderdikten sonra tarayıcıdan access.log dosyasını görüntüleyelim.
 
-![alt text](<Ekran görüntüsü 2026-03-14 023137.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 023137.png>)
 
 Bu durumda, zararlı PHP kodu sunucu üzerinde çalıştırılır ve saldırgan sunucu dosya sistemindeki dosyaları listeleyebilir.
 
@@ -112,21 +112,21 @@ Dosyayı olduğu gibi değil, yolda Base64 ile paketleyerek (encode) çağırır
 Dosyayı Base64 formatına çevirerek çağıran o meşhur payload:
 
 Hedef: home.php dosyasının kaynak kodunu ele geçirmek
-![alt text](<Ekran görüntüsü 2026-03-14 023330.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 023330.png>)
 
 Sunucu bize dosyanın içeriğini değil, onun Base64 ile zırhlanmış halini gönderir:
 
 1. Payload Hazırlama
 
-![alt text](<Ekran görüntüsü 2026-03-14 023336.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 023336.png>)
 
 2. Çıktıyı Alma (Encoded)
 
-![alt text](<Ekran görüntüsü 2026-03-14 023340.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 023340.png>)
 
 3. Şifreyi Çözme (Decoding)
 
-![alt text](<Ekran görüntüsü 2026-03-14 023343.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 023343.png>)
 
 Elimizdeki bu anlamsız metni terminale atıp orijinal haline döndürürüz:
 
@@ -134,7 +134,7 @@ Elimizdeki bu anlamsız metni terminale atıp orijinal haline döndürürüz:
 
 Ve işte perdenin arkasındaki gerçek kod:
 
-![alt text](<Ekran görüntüsü 2026-03-14 023346.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 023346.png>)
 
 # 🛡️ LFI Bypass: Filtrelerin Arkasından Dolanmak
 
@@ -144,7 +144,7 @@ Yazılımcılar bazen basit bir "bul ve sil" mantığıyla kapıyı kilitledikle
 
 Bazı uygulamalar, saldırganın ../ kullanarak yukarı tırmanmasını engellemek için şu fonksiyonu kullanır:
 
-![alt text](<Ekran görüntüsü 2026-03-14 030705.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 030705.png>)
 
 Buradaki akademik yanılgı şudur: Uygulama veriyi sadece bir kez tarar ve siler. Geriye kalan parçaların tekrar birleşip tehlike oluşturup oluşturmayacağını kontrol etmez.
 
@@ -162,7 +162,7 @@ Saldırgan, sistemin ../ gördüğü her yeri keseceğini bilir. Bu yüzden par�
 
 Saldırgan, her adım için ....// dizisini kullanır.
 
-![alt text](<Ekran görüntüsü 2026-03-14 031005.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 031005.png>)
 
 2-)Filtreleme İşlemi (Perde Arkası):
 
@@ -174,7 +174,7 @@ Uygulama, payload içindeki gizli ../ kısımlarını (kırmızıyla işaretli a
 
 Filtre görevini tamamladığını sanıp dosyayı işleme aldığında, elimizde tertemiz bir yol haritası kalır:
 
-![alt text](<Ekran görüntüsü 2026-03-14 031010.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 031010.png>)
 
 🎭 Neden Bypass Yapıyoruz? (Kısa & Öz Hikaye)
 Bir kale düşün. Kalenin ana kapısı (Web Uygulaması) kilitli. Sen gizlice girmek istiyorsun ama kapıda bir "Dedektör" (Filtre) var. Bu dedektör, elinde "Merdiven" (../) olan herkesi durdurup merdivenine el koyuyor.
@@ -248,7 +248,7 @@ Bazı geliştiriciler, kapıyı tamamen kapatmak yerine bir "koridor" (Approved 
 🧩 Teknik Engel: "Sadece Bu Kapıdan Gir!"
 Uygulama, gelen verinin mutlaka belirli bir kelimeyle (örneğin ./languages/) başlamasını şart koşar:
 
-![alt text](<Ekran görüntüsü 2026-03-14 040829.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 040829.png>)
 
 🕵️ Senaryo: "İzinli Bölgeden Kaçış"
 Saldırgan, sistemin istediği "pasaportu" ona verir ama pasaportun arasına bir kaçış bileti gizler.
@@ -262,7 +262,7 @@ Geri Dönüş (Escape): Hemen ardından gelen ../ komutlarıyla, girdiğimiz o "
 🚀 Uygulamalı Payload
 Sunucu bu yolu okuduğunda, önce languages klasörüne girer, sonra komutlarımızı takip ederek en tepeye tırmanır:
 
-![alt text](<Ekran görüntüsü 2026-03-14 040940.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 040940.png>)
 
 Harika bir final! LFI serüvenimizin en "nostaljik" ama teknik açıdan en öğretici kısmına geldik. Null Byte, siber güvenlik dünyasında "kelimelerin bittiği yer" olarak bilinir. GitHub raporun için bu bölümü "Zaman Yolculuğu: Görünmez Sonlandırıcı" temasıyla hazırladım.
 
@@ -276,14 +276,14 @@ Eski PHP sürümlerinde (v5.3.4 öncesi), sistem dosya yollarını işlerken C t
 🛠️ Senaryo: "Zoraki Uzantı"
 Yazılımcı, güvenliği sağlamak için kodu şöyle yazar:
 
-![alt text](<Ekran görüntüsü 2026-03-14 041033.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 041033.png>)
 
 Normal bir kullanıcı iletisim yazarsa, sistem iletisim.php dosyasını arar.
 
 🚀 Saldırı Hamlesi (Bypass)
 Saldırgan, sistemin sonuna ekleyeceği .php kısmından kurtulmak için payload'un sonuna %00 (Null Byte) ekler:
 
-![alt text](<Ekran görüntüsü 2026-03-14 041120.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 041120.png>)
 
 # 🎭 5. Double Encoding (Çift Kodlama): Güvenlik Duvarını Uyutmak
 
@@ -312,7 +312,7 @@ LFI zafiyetinde saldırgan sunucunun kendi dosyalarını ona karşı kullanırke
 🧩 RFI Saldırısının Anatomisi
 Zafiyetin temelinde yine o meşhur, filtrelemeden yoksun PHP kodu yatar:
 
-![alt text](<Ekran görüntüsü 2026-03-14 041431.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 041431.png>)
 
 LFI'dan farkı şudur: Uygulama sadece yerel dizinlere bakmakla kalmaz, HTTP/HTTPS protokolleri üzerinden gelen uzak bağlantıları da kabul eder.
 
@@ -326,7 +326,7 @@ Saldırgan, internete açık bir sunucuda (attacker.com) basit ama ölümcül bi
 🛠️ 1. Adım: Zararlı Dosyanın Hazırlanması
 Saldırgan, kendi sunucusuna shell.php (veya sunucu PHP değilse bile okunabilmesi için shell.txt) adında bir dosya yükler:
 
-![alt text](<Ekran görüntüsü 2026-03-14 041628.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 041628.png>)
 
 🚀 2. Adım: Fitilin Ateşlenmesi (Payload Gönderimi)
 Hedef sitenin zafiyetli parametresine, uzaktaki dosyanın tam adresi verilir:
@@ -358,7 +358,7 @@ Genel Bakış
 
 Açılan laboratuvara ilk gittiğimizde bizi aşağıdaki sayfa karşılıyor.
 
-![alt text](<Ekran görüntüsü 2026-03-14 041942.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 041942.png>)
 
 Görselde de görüldüğü üzere bizi 404 - Page Not Found sayfası karşılıyor. Sayfayı incelediğimizde URL'deki page parametresi dikkatimizi çekiyor. Bu parametre 404.php şeklinde bir değer alıyor.
 
@@ -368,7 +368,7 @@ Zafiyetin Tespiti
 
 Öncelikle zafiyetin varlığını tespit etmek için parametredeki değeri silerek uygulamanın nasıl tepki verdiğine bakalım.
 
-![alt text](<Ekran görüntüsü 2026-03-14 042045-1.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 042045-1.png>)
 
 Evet gördüğünüz gibi parametreyi boş bıraktığımızda uygulama bize hata mesajı döndü. Hata mesajına baktığımızda ilgili dizinde index.php dosyasının bulunamadığını söylüyor.
 
@@ -378,6 +378,8 @@ Zafiyetin varlığını tespit ettik ve şimdi sırada bu zafiyeti kullanarak si
 
 Amacımız /etc/passwd dosyasına erişmek. Bunun için şu payloadı kullanacağız: ../../../../etc/passwd.
 
-![alt text](<Ekran görüntüsü 2026-03-14 042305.png>)
+![alt text](<LFI-RFI img/Ekran görüntüsü 2026-03-14 042305.png>)
 
 Cevabımız: PİONEER
+
+Görseller img klasöründe.
